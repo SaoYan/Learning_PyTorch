@@ -22,7 +22,7 @@ class Net(nn.Module):
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = F.max_pool2d(x, kernel_size=2, stride=None, padding=0)
-        x = x = F.relu(self.conv2(x))
+        x = F.relu(self.conv2(x))
         x = F.max_pool2d(x, 2)
         x = x.view(-1, self.num_flat_features(x)) # refer to: http://pytorch.org/docs/master/tensors.html#torch.Tensor.view
         x = F.relu(self.fc1(x))

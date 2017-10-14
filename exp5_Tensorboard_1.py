@@ -2,6 +2,7 @@
 
 # Use tensorboard visualization toolkit in PyTorch
 # reference: https://zhuanlan.zhihu.com/p/27624517
+# cannot add graph, embeddings
 
 import torch
 from torch.autograd import Variable
@@ -55,7 +56,7 @@ if __name__ == "__main__":
     logger = Logger('./CIFAR10_logs')
     # training
     step = 0
-    for epoch in range(2): # loop over the dataset multiple times; not the # steps!
+    for epoch in range(1): # loop over the dataset multiple times; not the # steps!
         running_loss = 0.0
         correct = 0
         total = 0
@@ -71,7 +72,7 @@ if __name__ == "__main__":
             running_loss += loss.data[0]
             if (i+1) % 100 == 0:
                 # trainging loss
-                print('[%d, %d] loss: %f' %(epoch+1, i+1, running_loss/2000))
+                print('[%d, %d] loss: %f' %(epoch+1, i+1, running_loss/100))
                 # test accuracy
                 for data in testloader:
                     images_test, labels_test = data
@@ -85,7 +86,7 @@ if __name__ == "__main__":
                 #============ TensorBoard logging ============#
                 # (1) Log the scalar values
                 info = {
-                    'loss': loss.data[0],
+                    'loss': running_loss/100,
                     'accuracy': 100*correct/total
                 }
                 for tag, value in info.items():
@@ -98,7 +99,7 @@ if __name__ == "__main__":
 
                 # (3) Log the images
                 info = {
-                    'images': to_np(inputs.view(-1, 32, 32, 3)[:3])
+                    'images': to_np(inputs.view(-1,3,32,32)[:3])
                 }
                 for tag, images in info.items():
                     logger.image_summary(tag, images, step)
