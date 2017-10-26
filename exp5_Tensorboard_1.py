@@ -96,7 +96,6 @@ if __name__ == "__main__":
                     tag = tag.replace('.', '/')
                     logger.histo_summary(tag, to_np(value), step)
                     logger.histo_summary(tag+'/grad', to_np(value.grad), step)
-
                 # (3) Log the images
                 info = {
                     'images': to_np(inputs.view(-1,3,32,32)[:3])
