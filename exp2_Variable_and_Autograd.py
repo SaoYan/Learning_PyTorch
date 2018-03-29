@@ -17,7 +17,7 @@ y = x + 2
 print(y.grad_fn)
 z = y * y * 3
 out = z.mean()
-print out
+print(out)
 
 # backprop
 out.backward()
