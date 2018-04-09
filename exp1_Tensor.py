@@ -25,7 +25,7 @@ print("y1:"); print(y1)
 y2 = x2 + x3
 print("y2:"); print(y2)
 # Addition: syntax 3
-y3=torch.Tensor(5,3)
+y3 = torch.Tensor(5,3)
 torch.add(x2,x3,out=y3)
 print("y3:"); print(y3)
 # Addition: in place
