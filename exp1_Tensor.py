@@ -29,22 +29,28 @@ y3 = torch.Tensor(5,3)
 torch.add(x2,x3,out=y3)
 print("y3:"); print(y3)
 # Addition: in place
-y4 = x2
+y4 = x2.clone()
 y4.add_(x3)
 print("y4:"); print(y4)
 # standard numpy-like indexing is supported
 y5 = x3[0,:]
 print("y5:"); print(y5)
+# expand/squeeze dimensions
+x3_hat = x3.clone()
+x3_hat = torch.unsqueeze(x3_hat, 0) # [5,3] ----> [1,5,3]
+print(x3_hat.size())
+x3_hat = torch.squeeze(x3_hat) # [1,5,3] ----> [5,3]
+print(x3_hat.size())
 
 # Numpy Bridge
-# torch Tensor 2 ndarray
+# from Tensor to ndarray
 a = torch.ones(3)
 print("a:"); print(a)
 b = a.numpy()
 print("b:"); print(b)
 a.add_(1)
 print("b_new:"); print(b) # the value of ndarray changes according to torch Tensor
-# ndarray 2 torch Tensor
+# from ndarray to Tensor
 c = torch.from_numpy(b)
 print("c:"); print(c)
 a.add_(1)
@@ -53,6 +59,6 @@ print("c_new:"); print(c) # the values change in a chain: a->b->c
 # CUDA Tensors
 # Tensors can be moved onto GPU
 if torch.cuda.is_available():
-    x2 = x1.cuda()
+    x2 = x2.cuda()
     x3 = x3.cuda()
     y = x2 + x3
