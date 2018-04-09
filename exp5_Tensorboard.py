@@ -1,8 +1,7 @@
 #! /usr/bin/python
 
 # Use tensorboard visualization toolkit in PyTorch
-# reference: https://zhuanlan.zhihu.com/p/27624517
-# cannot add graph, embeddings
+# reference: https://github.com/lanpa/tensorboard-pytorch
 
 import torch
 from torch.autograd import Variable
@@ -11,7 +10,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
-from logger import Logger
+import torchvision.utils as utils
+from tensorboardX import SummaryWriter
 
 transform = transforms.Compose([transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -52,8 +52,13 @@ if __name__ == "__main__":
     net.cuda()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-    # Set the logger
-    logger = Logger('./CIFAR10_logs')
+    # Set the Summary Writer
+    writer = SummaryWriter('./CIFAR10_logs')
+    # add graph
+    # if you want to show the input tensor, set requires_grad=True
+    # t = Variable(torch.Tensor(1,3,32,32).cuda(), requires_grad=True)
+    # res = net(t)
+    # writer.add_graph(net, res)
     # training
     step = 0
     for epoch in range(1): # loop over the dataset multiple times; not the # steps!
@@ -85,23 +90,17 @@ if __name__ == "__main__":
 
                 #============ TensorBoard logging ============#
                 # (1) Log the scalar values
-                info = {
-                    'loss': running_loss/100,
-                    'accuracy': 100*correct/total
-                }
-                for tag, value in info.items():
-                    logger.scalar_summary(tag, value, step)
+                writer.add_scalar('loss', running_loss/100, step)
+                writer.add_scalar('accuracy', 100*correct/total, step)
                 # (2) Log values and gradients of the parameters (histogram)
                 for tag, value in net.named_parameters():
                     tag = tag.replace('.', '/')
-                    logger.histo_summary(tag, to_np(value), step)
-                    logger.histo_summary(tag+'/grad', to_np(value.grad), step)
+                    writer.add_histogram(tag, to_np(value), step)
+                    writer.add_histogram(tag+'/grad', to_np(value.grad), step)
                 # (3) Log the images
-                info = {
-                    'images': to_np(inputs.view(-1,3,32,32)[:3])
-                }
-                for tag, images in info.items():
-                    logger.image_summary(tag, images, step)
+                images = utils.make_grid(inputs.view(-1,3,32,32).data, nrow=5,
+                                                    normalize=True, scale_each=True)
+                writer.add_image('Image', images, step)
                 # reset
                 running_loss = 0.0
                 correct = 0
