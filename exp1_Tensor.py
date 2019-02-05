@@ -59,6 +59,7 @@ print("c_new:"); print(c) # the values change in a chain: a->b->c
 # CUDA Tensors
 # Tensors can be moved onto GPU
 if torch.cuda.is_available():
-    x2 = x2.cuda()
-    x3 = x3.cuda()
+    device = torch.device("cuda")
+    x2 = x2.to(device)
+    x3 = x3.to(device)
     y = x2 + x3
