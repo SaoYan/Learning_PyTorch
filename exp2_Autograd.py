@@ -33,3 +33,10 @@ print("\nx.grad:")
 print(x.grad)
 
 # can we compute gradient of a non-scalar?
+print("\n\n\ngradient of a non-scalar?")
+x = torch.ones(2, 2, requires_grad=True)
+y = x + 2
+z = y * y * 3
+a = 5 * torch.ones(2, 2)
+z.backward(a)
+print(x.grad)
