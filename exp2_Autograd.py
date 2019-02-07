@@ -3,10 +3,12 @@
 # How does PyTorch compute differentiation?
 
 import torch
-from torch.autograd import Variable
 
-# create a varible
-x = Variable(torch.ones(2, 2), requires_grad=True)
+# create a tensor with requires_grad is True
+x = torch.ones(2, 2, requires_grad=True)
+# can also modify requires_grad later
+# x = torch.ones(2, 2)
+# x.requires_grad_()
 print("\nx:")
 print(x)
 
@@ -29,3 +31,5 @@ out.backward()
 # gradients (we expect 4.5)
 print("\nx.grad:")
 print(x.grad)
+
+# can we compute gradient of a non-scalar?
