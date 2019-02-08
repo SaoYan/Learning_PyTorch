@@ -68,6 +68,7 @@ if __name__ == "__main__":
             optimizer.step()
         #  after each epoch: check loss on test set
         model.eval()
-        out_test = model(test_input)
-        loss_test = criterion(out_test, test_target)
-        print("epoch %d: test loss %.4f" % (epoch, loss.item()))
+        with torch.no_grad():
+            out_test = model(test_input)
+            loss_test = criterion(out_test, test_target)
+            print("epoch %d: test loss %.4f" % (epoch, loss.item()))
