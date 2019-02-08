@@ -27,11 +27,20 @@ class Net(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.dense = nn.Sequential(
-            nn.Linear(in_features=49, out_features=1024, bias=True),
+            nn.Linear(in_features=7*7*64, out_features=1024, bias=True),
             nn.ReLU(),
             nn.Dropout(p=0.5),
             nn.Linear(in_features=1024, out_features=num_classes, bias=True)
         )
+    def reset_parameters(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0.)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0., 0.01)
+                nn.init.constant_(m.bias, 0.)
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
@@ -44,9 +53,9 @@ if __name__ == "__main__":
         transforms.ToTensor(),
         transforms.Normalize((0.1307, 0.1307, 0.1307), (0.3081, 0.3081, 0.3081))
     ])
-    trainset = datasets.CIFAR10(root='CIFAR10', train=True, download=True, transform=transform)
+    trainset = datasets.MNIST(root='MNIST', train=True, download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=4)
-    testset = torchvision.datasets.CIFAR10(root='CIFAR10', train=False, download=True, transform=transform)
+    testset = datasets.MNIST(root='MNIST', train=False, download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=1000, shuffle=False, num_workers=4)
     # define the network
     net = Net(in_features=1, num_classes=10).to(device)
