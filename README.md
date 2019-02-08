@@ -2,7 +2,7 @@
 Simple demos for PyTorch.  
 Reference: [PyTorch online tutorials](http://pytorch.org/tutorials/)
 
-## exp1_Tensor.py:
+## exp1_Tensor.py   
 [Reference](http://pytorch.org/tutorials/beginner/blitz/tensor_tutorial.html#sphx-glr-beginner-blitz-tensor-tutorial-py)      
 This demo includes:
 1. How to construct a Tensor in PyTorch
@@ -10,20 +10,15 @@ This demo includes:
 3. How to convert a PyTorch-Tensor to Numpy-Ndarray, and vice versa.
 4. How to move Tensors onto GPU for efficient computation.
 
-## exp2_Variable_and_Autograd.py:
+## exp2_Autograd.py   
 [Reference](http://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html)    
-This demo shows how to compute differentiation for all operations on Tensors. PyTorch uses ***autograd*** package.
+This demo shows how to compute gradients.   
 
-## exp3_CNN.py:
-This demo shows how to construct a CNN in PyTorch.
-1. Two convolutional layers, each of which is follows by one ReLU activation and one max-pooling layer.
-2. Three fully-connected layers.
+## exp3_simple_linear_model_1.py & exp3_simple_linear_model_2.py   
+This demo construct a basic linear regression model. The two scripts shows two equivalent implementation: using **torch.nn** and **torch.nn.functional**, respectively.  
 
-## exp4_CIFAR10_CNN.py
-[Reference](http://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html)    
-This demo applies the CNN in exp3 and trains a classifier on CIFRA10 dataset.
-1. cost function: cross entropy loss    
-2. SGD optimizer, learning rate 1e-4, momentum 0.9
+## exp4_CNN_MNIST.py  
+Train a simple CNN model on MNIST dataset.   
 
 ## exp5_Tensorboard.py
 One disadvantage of PyTorch is that it doesn't have its own visualization toolkit. But it is possible to use Tensorboard in PyTorch, thanks to [tensorboardX]((https://github.com/lanpa/tensorboard-pytorch)). ***(Of course, you need to install tensorlfow first!)***  
