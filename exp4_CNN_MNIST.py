@@ -32,6 +32,7 @@ class Net(nn.Module):
             nn.Dropout(p=0.5),
             nn.Linear(in_features=1024, out_features=num_classes, bias=True)
         )
+        self.reset_parameters()
     def reset_parameters(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -44,6 +45,7 @@ class Net(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
+        x = x.view(x.size(0), -1)
         x = self.dense(x)
         return x
 
@@ -64,7 +66,7 @@ if __name__ == "__main__":
     # define optimizer
     optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     # training
-    epochs = 20
+    epochs = 10
     for epoch in range(epochs):
         torch.cuda.empty_cache()
         correct = 0.
