@@ -14,31 +14,22 @@ torch.backends.cudnn.benchmark = True
 class LinearModel(nn.Module):
     def __init__(self, in_features, inter_features, out_features, bias=True):
         super(LinearModel, self).__init__()
-        self.bias = bias
-        self.training = True
-        self.weight_param1 = nn.Parameter(
-            torch.FloatTensor(inter_features, in_features).normal_(0.0, 0.01)
+        self.layer = nn.Sequential(
+            nn.Linear(in_features=in_features, out_features=inter_features, bias=bias),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(in_features=inter_features, out_features=out_features, bias=bias)
         )
-        self.weight_param2 = nn.Parameter(
-            torch.FloatTensor(out_features, inter_features).normal_(0.0, 0.01)
-        )
-        if self.bias:
-            self.bias_param1 = nn.Parameter(
-                torch.FloatTensor(inter_features).fill_(0.)
-            )
-            self.bias_param2 = nn.Parameter(
-                torch.FloatTensor(out_features).fill_(0.)
-            )
-    def set_mode(self, training):
-        self.training = training
+        self.reset_parameters()
+    def reset_parameters(self):
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
     def forward(self, x):
         # the shape of x should be batch_size x in_features
-        x = F.linear(input=x, weight=self.weight_param1,
-            bias=self.bias_param1 if self.bias else None)
-        x = F.relu(x)
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = F.linear(input=x, weight=self.weight_param2,
-            bias=self.bias_param2 if self.bias else None)
+        x = self.layer(x)
         return x
 
 if __name__ == "__main__":
@@ -63,7 +54,7 @@ if __name__ == "__main__":
         torch.cuda.empty_cache()
         for i in range(1000): # iterate through dataset
             # set to training mode
-            model.set_mode(True)
+            model.train()
             # clear grad cache
             model.zero_grad()
             optimizer.zero_grad()
@@ -76,7 +67,7 @@ if __name__ == "__main__":
             loss.backward()
             optimizer.step()
         #  after each epoch: check loss on test set
-        model.set_mode(False)
+        model.eval()
         with torch.no_grad():
             out_test = model(test_input)
             loss_test = criterion(out_test, test_target)

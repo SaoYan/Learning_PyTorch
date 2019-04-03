@@ -53,7 +53,7 @@ if __name__ == "__main__":
     # dataset
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.1307, 0.1307, 0.1307), (0.3081, 0.3081, 0.3081))
+        transforms.Normalize((0.1307,), (0.3081,))
     ])
     trainset = datasets.MNIST(root='MNIST', train=True, download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=4)
