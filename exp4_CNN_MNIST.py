@@ -51,20 +51,30 @@ class Net(nn.Module):
 
 if __name__ == "__main__":
     # dataset
+    def _worker_init_fn_():
+        torch_seed = torch.initial_seed()
+        np_seed = torch_seed // 2**32-1
+        random.seed(torch_seed)
+        np.random.seed(np_seed)
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
     ])
     trainset = datasets.MNIST(root='MNIST', train=True, download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=4)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, 
+        shuffle=True, num_workers=4, worker_init_fn=_worker_init_fn_())
     testset = datasets.MNIST(root='MNIST', train=False, download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=1000, shuffle=False, num_workers=4)
+
     # define the network
     net = Net(in_features=1, num_classes=10).to(device)
+
     # define loss
     criterion = nn.CrossEntropyLoss()
+
     # define optimizer
     optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+    
     # training
     epochs = 10
     for epoch in range(epochs):
